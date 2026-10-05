@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#110e0c">
+<meta name="color-scheme" content="dark">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="DorIAn">
+<title>DorIAn</title>
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #110e0c;
+    --bg-deep: #0c0b0a;
+    --card: #181410;
+    --card-2: #221c17;
+    --line: #3a3128;
+    --line-soft: #2c261f;
+    --text: #f7f1e8;
+    --muted: #e4d5c4;
+    --soft: #cbbba8;
+    --amber: #ff9f1a;
+    --amber-2: #ffb03a;
+    --amber-deep: #e07d00;
+    --ink: #1a1008;
+    --radius: 18px;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { background: var(--bg-deep); }
+
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    background:
+      radial-gradient(900px 420px at 50% -120px, rgba(255, 159, 26, 0.22), transparent 60%),
+      var(--bg-deep);
+    color: var(--text);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    font-size: 17px;
+    line-height: 1.4;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  button {
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+
+  :focus { outline: none; }
+
+  :focus-visible {
+    outline: 3px solid #ffc14d;
+    outline-offset: 2px;
+  }
+
+  .app {
+    width: min(100%, 480px);
+    min-height: 100dvh;
+    margin: 0 auto;
+    padding: 0 16px calc(32px + env(safe-area-inset-bottom));
+    background:
+      linear-gradient(180deg, rgba(255, 159, 26, 0.08), transparent 240px),
+      var(--bg);
+  }
+
+  .ident {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: calc(18px + env(safe-area-inset-top)) 0 16px;
+  }
+
+  .orb {
+    width: 60px;
+    height: 60px;
+    flex: none;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: radial-gradient(circle at 32% 28%, #ffd27a 0%, #ff9f1a 46%, #e06a00 100%);
+    color: var(--ink);
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    box-shadow: 0 10px 28px rgba(255, 140, 20, 0.28);
+  }
+
+  h1 {
+    margin: 0;
+    font-size: 38px;
+    line-height: 0.95;
+    letter-spacing: -0.045em;
+    font-weight: 800;
+  }
+
+  h1 .ia { color: var(--amber); }
+
+  .goal {
+    margin: 6px 0 0;
+    font-size: 16px;
+    line-height: 1.3;
+    color: var(--muted);
+  }
+
+  .week {
+    position: sticky;
+    top: env(safe-area-inset-top);
+    z-index: 5;
+    margin: 0 -16px;
+    padding: 10px 16px 12px;
+    background: rgba(17, 14, 12, 0.94);
+    border-bottom: 1px solid var(--line-soft);
+    backdrop-filter: blur(16px);
+  }
+
+  .week::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(-1 * env(safe-area-inset-top));
+    height: env(safe-area-inset-top);
+    background: rgba(17, 14, 12, 0.94);
+  }
+
+  .week-label {
+    margin: 0 0 10px;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--muted);
+  }
+
+  .days {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .day {
+    min-width: 0;
+    min-height: 64px;
+    padding: 7px 0 6px;
+    border: 0;
+    border-radius: 14px;
+    background: var(--card-2);
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+  }
+
+  .day .dow {
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    color: var(--muted);
+    line-height: 1;
+  }
+
+  .day .num {
+    font-size: 18px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.1;
+  }
+
+  .day[aria-current="date"]:not([aria-selected="true"]) {
+    box-shadow: inset 0 0 0 2px var(--amber);
+  }
+
+  .day[aria-selected="true"] {
+    background: var(--amber);
+    color: var(--ink);
+  }
+
+  .day[aria-selected="true"] .dow { color: #4a3008; }
+
+  .when {
+    margin: 18px 0 10px;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--muted);
+  }
+
+  .tags {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .kicker {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--amber-2);
+  }
+
+  .chip {
+    margin: 0;
+    padding: 5px 11px;
+    border-radius: 999px;
+    background: var(--amber);
+    color: var(--ink);
+    font-size: 15px;
+    font-weight: 800;
+    line-height: 1.2;
+  }
+
+  h2 {
+    margin: 10px 0 0;
+    font-size: 30px;
+    line-height: 1.12;
+    letter-spacing: -0.03em;
+    font-weight: 800;
+  }
+
+  .lede {
+    margin: 8px 0 0;
+    font-size: 17px;
+    line-height: 1.45;
+    color: var(--muted);
+  }
+
+  .bar {
+    margin-top: 16px;
+    height: 10px;
+    border-radius: 999px;
+    background: #2a241c;
+    overflow: hidden;
+  }
+
+  .bar > span {
+    display: block;
+    height: 100%;
+    width: 0;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--amber-deep), #ffc14d);
+    transition: width 200ms ease;
+  }
+
+  .count {
+    margin: 8px 0 0;
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--text);
+  }
+
+  .lifts {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 16px;
+  }
+
+  .group {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: inset 4px 0 0 #3a3128;
+  }
+
+  .group.is-complete {
+    border-color: rgba(255, 159, 26, 0.5);
+    box-shadow: inset 4px 0 0 var(--amber);
+  }
+
+  .set {
+    width: 100%;
+    min-height: 72px;
+    padding: 12px 14px 12px 16px;
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr) 44px;
+    column-gap: 12px;
+    align-items: center;
+    text-align: left;
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid var(--line-soft);
+  }
+
+  .group .set:last-child { border-bottom: 0; }
+
+  .set:focus-visible {
+    outline: none;
+    box-shadow: inset 0 0 0 3px #ffc14d;
+  }
+
+  .set.is-done { background: rgba(255, 159, 26, 0.1); }
+
+  .set:active { background: rgba(255, 159, 26, 0.16); }
+
+  .n {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    background: #2c241c;
+    color: var(--amber-2);
+    font-size: 16px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .set.is-done .n {
+    background: var(--amber);
+    color: var(--ink);
+  }
+
+  .ex {
+    display: block;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -0.015em;
+  }
+
+  .rx {
+    display: block;
+    margin-top: 3px;
+    font-size: 16px;
+    line-height: 1.3;
+    color: var(--soft);
+  }
+
+  .set.is-done .rx { color: var(--muted); }
+
+  .tick {
+    width: 36px;
+    height: 36px;
+    justify-self: end;
+    border-radius: 50%;
+    border: 2px solid #8d7353;
+    display: grid;
+    place-items: center;
+    color: var(--ink);
+    background: transparent;
+  }
+
+  .tick svg { display: block; opacity: 0; }
+
+  .set.is-done .tick {
+    background: var(--amber);
+    border-color: var(--amber);
+  }
+
+  .set.is-done .tick svg { opacity: 1; }
+
+  .block {
+    margin-top: 16px;
+    padding: 8px 16px 16px;
+    border-radius: 22px;
+    background: var(--card);
+    border: 1px solid var(--line);
+  }
+
+  .seq-label {
+    margin: 10px 0 0;
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--amber-2);
+  }
+
+  .notes, .seq {
+    list-style: none;
+    margin: 4px 0 0;
+    padding: 0;
+  }
+
+  .seq { counter-reset: pose; }
+
+  .notes li, .seq li {
+    min-height: 52px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 2px;
+    border-top: 1px solid var(--line-soft);
+    font-size: 17px;
+    line-height: 1.35;
+  }
+
+  .notes li:first-child, .seq li:first-child { border-top: 0; }
+
+  .notes li::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--amber);
+    flex: none;
+  }
+
+  .seq li::before {
+    counter-increment: pose;
+    content: counter(pose);
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    background: #2c241c;
+    color: var(--amber-2);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: 800;
+    flex: none;
+  }
+
+  .block-done {
+    width: 100%;
+    min-height: 64px;
+    margin-top: 8px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border: 0;
+    border-radius: 16px;
+    background: var(--amber);
+    color: var(--ink);
+    font-size: 18px;
+    font-weight: 800;
+  }
+
+  .block-done .tick {
+    width: 30px;
+    height: 30px;
+    justify-self: auto;
+    border-color: var(--ink);
+  }
+
+  .block-done.is-done {
+    background: transparent;
+    color: var(--amber-2);
+    box-shadow: inset 0 0 0 2px var(--amber);
+  }
+
+  .block-done.is-done .tick {
+    background: var(--amber);
+    border-color: var(--amber);
+    color: var(--ink);
+  }
+
+  .block-done.is-done .tick svg { opacity: 1; }
+
+  .block-done:active { transform: scale(0.99); }
+
+  .rest {
+    margin-top: 18px;
+    padding: 32px 20px 28px;
+    border-radius: 22px;
+    text-align: center;
+    background: var(--card);
+    border: 1px dashed #6a5438;
+  }
+
+  .pause {
+    width: 88px;
+    height: 88px;
+    margin: 0 auto 16px;
+    border-radius: 50%;
+    border: 2px solid var(--amber);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .pause span {
+    width: 8px;
+    height: 28px;
+    border-radius: 4px;
+    background: var(--amber);
+  }
+
+  .rest .lede { margin: 0; }
+
+  .next {
+    margin: 14px 0 0;
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--amber-2);
+  }
+
+  .banner {
+    margin: 18px 0 0;
+    padding: 14px 16px;
+    border-radius: 16px;
+    background: rgba(255, 159, 26, 0.16);
+    color: #ffd48a;
+    font-size: 17px;
+    font-weight: 800;
+    text-align: center;
+  }
+
+  .reset {
+    width: 100%;
+    margin-top: 14px;
+    min-height: 56px;
+    border-radius: 16px;
+    border: 1px solid #6a5438;
+    background: transparent;
+    color: #f0d7b4;
+    font-size: 17px;
+    font-weight: 700;
+  }
+
+  .reset.is-armed {
+    border-color: var(--amber);
+    background: rgba(255, 159, 26, 0.14);
+    color: #ffc14d;
+  }
+
+  .reset:disabled { opacity: 0.38; cursor: default; }
+
+  @media (hover: hover) {
+    .day:not([aria-selected="true"]):hover { background: #2e261f; }
+    .set:hover { background: rgba(255, 159, 26, 0.06); }
+    .reset:not(:disabled):hover { border-color: var(--amber-2); }
+  }
+
+  @media (max-width: 359px) {
+    .days { gap: 4px; }
+    .day { border-radius: 12px; min-height: 60px; }
+    h1 { font-size: 34px; }
+    h2 { font-size: 26px; }
+    .ex { font-size: 17px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      transition: none !important;
+      scroll-behavior: auto !important;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="app">
+    <header class="ident">
+      <div class="orb" aria-hidden="true">D</div>
+      <div>
+        <h1>Dor<span class="ia">IA</span>n</h1>
+        <p class="goal">Objetivo actual: mantenerse</p>
+      </div>
+    </header>
+    <div class="week">
+      <p class="week-label" id="week-label"></p>
+      <div class="days" id="days" role="tablist" aria-label="Días de la semana"></div>
+    </div>
+    <main id="panel" role="tabpanel" tabindex="-1"></main>
+    <noscript><p class="lede">Activa JavaScript para ver la sesión de hoy.</p></noscript>
+  </div>
+  <script>
+(function () {
+  "use strict";
+
+  var STORAGE_KEY = "dorian.dayProgress.v1";
+  var SETS = 4;
+
+  var SHORT = ["dom", "lun", "mar", "mié", "jue", "vie", "sáb"];
+  var NAME = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
+
+  var PROGRAM = {
+    1: {
+      kind: "gym",
+      kicker: "Gimnasio",
+      chip: "4 series",
+      title: "Fuerza · tren superior",
+      lede: "Básicos en 6–8 repeticiones. Accesorios en 8–12.",
+      exercises: [
+        { id: "bench", name: "Press banca", rx: "6–8 repeticiones" },
+        { id: "row", name: "Remo", rx: "6–8 repeticiones" },
+        { id: "ohp", name: "Press militar", rx: "6–8 repeticiones" },
+        { id: "pull", name: "Dominadas o jalón", rx: "6–8 repeticiones" },
+        { id: "curl", name: "Curl de bíceps", rx: "8–12 repeticiones" },
+        { id: "tri", name: "Extensiones de tríceps", rx: "8–12 repeticiones" }
+      ]
+    },
+    2: {
+      kind: "block",
+      kicker: "Correr",
+      chip: "40–50 min",
+      title: "Rodaje suave",
+      lede: "Continuo y fácil. Sin series.",
+      steps: [
+        "40–50 minutos seguidos",
+        "Ritmo suave, puedes ir hablando",
+        "Terreno llano o el que te sea cómodo"
+      ]
+    },
+    3: {
+      kind: "gym",
+      kicker: "Gimnasio",
+      chip: "4 series",
+      title: "Fuerza · tren inferior",
+      lede: "Sentadilla y rumano como base. El resto, controlado.",
+      exercises: [
+        { id: "sq", name: "Sentadilla", rx: "6–8 repeticiones" },
+        { id: "rdl", name: "Peso muerto rumano", rx: "8–10 repeticiones" },
+        { id: "lunge", name: "Zancadas", rx: "8–12 por pierna" },
+        { id: "leg", name: "Prensa o búlgaras", rx: "8–12 repeticiones" },
+        { id: "calf", name: "Gemelos", rx: "10–12 repeticiones" },
+        { id: "core", name: "Core", rx: "8–12 repeticiones" }
+      ]
+    },
+    4: {
+      kind: "block",
+      kicker: "Correr",
+      chip: "Series",
+      title: "Series o tempo corto",
+      lede: "Intervalos cortos, con calentamiento y vuelta a la calma.",
+      steps: [
+        "Calentamiento: 10 min muy suaves",
+        "6 × 3 min a ritmo fuerte",
+        "2 min suaves entre cada intervalo",
+        "Vuelta a la calma: 5 min suaves"
+      ]
+    },
+    5: {
+      kind: "gym",
+      kicker: "Gimnasio",
+      chip: "Más ligera",
+      title: "Fuerza · cuerpo completo",
+      lede: "Cuerpo completo, con menos carga que lunes y miércoles.",
+      exercises: [
+        { id: "dl", name: "Peso muerto", rx: "6–8 repeticiones" },
+        { id: "press", name: "Press", rx: "6–8 repeticiones" },
+        { id: "row", name: "Remo", rx: "8–12 repeticiones" },
+        { id: "fsq", name: "Sentadilla frontal o goblet", rx: "8–12 repeticiones" },
+        { id: "face", name: "Face pull", rx: "12–15 repeticiones" },
+        { id: "plank", name: "Plancha", rx: "30–40 segundos" }
+      ]
+    },
+    6: {
+      kind: "block",
+      kicker: "Movilidad",
+      chip: "30–40 min",
+      title: "Yoga y movilidad",
+      lede: "Una secuencia de posturas. Sin series de gimnasio.",
+      sequence: true,
+      steps: [
+        "Respiración sentada",
+        "Gato-vaca",
+        "Perro boca abajo",
+        "Postura del niño",
+        "Guerrero I",
+        "Guerrero II",
+        "Triángulo",
+        "Paloma",
+        "Torsión supina",
+        "Mariposa",
+        "Savasana"
+      ]
+    },
+    0: {
+      kind: "rest",
+      kicker: "Libre",
+      chip: "Sin sesión",
+      title: "Descanso",
+      lede: "Día libre. No hay sesión programada.",
+      next: "El lunes: fuerza de tren superior."
+    }
+  };
+
+  var memory = null;
+  var armed = false;
+  var armTimer = 0;
+  var today = madridToday();
+  var selected = today;
+  var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  var weekLabel = document.getElementById("week-label");
+  var daysEl = document.getElementById("days");
+  var panel = document.getElementById("panel");
+
+  function el(tag, opts) {
+    var node = document.createElement(tag);
+    var options = opts || {};
+    Object.keys(options).forEach(function (key) {
+      var value = options[key];
+      if (value == null || value === false) return;
+      if (key === "class") node.className = value;
+      else if (key === "text") node.textContent = value;
+      else node.setAttribute(key, value === true ? "" : String(value));
+    });
+    return node;
+  }
+
+  function madridToday() {
+    var parts = new Intl.DateTimeFormat("en-US", {
+      timeZone: "Europe/Madrid",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
+    }).formatToParts(new Date());
+    function grab(type) {
+      for (var i = 0; i < parts.length; i++) {
+        if (parts[i].type === type) return parts[i].value;
+      }
+      return "";
+    }
+    var month = grab("month").padStart(2, "0");
+    var day = grab("day").padStart(2, "0");
+    return grab("year") + "-" + month + "-" + day;
+  }
+
+  function parseYmd(ymd) {
+    var bits = ymd.split("-");
+    return { y: Number(bits[0]), m: Number(bits[1]), d: Number(bits[2]) };
+  }
+
+  function addDays(ymd, amount) {
+    var p = parseYmd(ymd);
+    var dt = new Date(Date.UTC(p.y, p.m - 1, p.d + amount));
+    var month = String(dt.getUTCMonth() + 1).padStart(2, "0");
+    var day = String(dt.getUTCDate()).padStart(2, "0");
+    return dt.getUTCFullYear() + "-" + month + "-" + day;
+  }
+
+  function weekdaySun0(ymd) {
+    var p = parseYmd(ymd);
+    return new Date(Date.UTC(p.y, p.m - 1, p.d)).getUTCDay();
+  }
+
+  function mondayOf(ymd) {
+    var w = weekdaySun0(ymd);
+    return addDays(ymd, w === 0 ? -6 : 1 - w);
+  }
+
+  function formatLong(ymd) {
+    var p = parseYmd(ymd);
+    var dt = new Date(Date.UTC(p.y, p.m - 1, p.d, 12));
+    var text = new Intl.DateTimeFormat("es-ES", {
+      timeZone: "UTC",
+      weekday: "long",
+      day: "numeric",
+      month: "long"
+    }).format(dt);
+    return text.charAt(0).toUpperCase() + text.slice(1);
+  }
+
+  function formatDayMonth(ymd) {
+    var p = parseYmd(ymd);
+    var dt = new Date(Date.UTC(p.y, p.m - 1, p.d, 12));
+    return new Intl.DateTimeFormat("es-ES", {
+      timeZone: "UTC",
+      day: "numeric",
+      month: "long"
+    }).format(dt);
+  }
+
+  function readStore() {
+    if (memory) return memory;
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      var parsed = raw ? JSON.parse(raw) : {};
+      memory = parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
+    } catch (err) {
+      memory = {};
+    }
+    return memory;
+  }
+
+  function writeStore() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(readStore()));
+    } catch (err) {}
+  }
+
+  function marks(ymd) {
+    var all = readStore();
+    var day = all[ymd];
+    if (!day || typeof day !== "object" || Array.isArray(day)) return {};
+    return day;
+  }
+
+  function setDone(ymd, id, on) {
+    var all = readStore();
+    if (!all[ymd] || typeof all[ymd] !== "object" || Array.isArray(all[ymd])) all[ymd] = {};
+    if (on) all[ymd][id] = true;
+    else delete all[ymd][id];
+    if (!Object.keys(all[ymd]).length) delete all[ymd];
+    writeStore();
+  }
+
+  function clearDay(ymd) {
+    var all = readStore();
+    delete all[ymd];
+    writeStore();
+  }
+
+  function makeTick() {
+    var span = el("span", { class: "tick", "aria-hidden": "true" });
+    span.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5 9.2 16.8 19 7.2"></path></svg>';
+    return span;
+  }
+
+  function disarm() {
+    armed = false;
+    window.clearTimeout(armTimer);
+    armTimer = 0;
+  }
+
+  function buildDays() {
+    var monday = mondayOf(today);
+    weekLabel.textContent = "Semana del " + formatDayMonth(monday);
+    for (var i = 0; i < 7; i++) {
+      var ymd = addDays(monday, i);
+      var w = weekdaySun0(ymd);
+      var btn = el("button", {
+        class: "day",
+        type: "button",
+        id: "tab-" + ymd,
+        role: "tab",
+        "aria-controls": "panel",
+        "aria-label": formatLong(ymd) + (ymd === today ? ", hoy" : "")
+      });
+      btn.dataset.ymd = ymd;
+      if (ymd === today) btn.setAttribute("aria-current", "date");
+      btn.appendChild(el("span", { class: "dow", text: SHORT[w] }));
+      btn.appendChild(el("span", { class: "num", text: String(Number(ymd.slice(8))) }));
+      daysEl.appendChild(btn);
+    }
+  }
+
+  function paintDays() {
+    var tabs = daysEl.querySelectorAll('[role="tab"]');
+    var current = null;
+    for (var i = 0; i < tabs.length; i++) {
+      var on = tabs[i].dataset.ymd === selected;
+      tabs[i].setAttribute("aria-selected", on ? "true" : "false");
+      tabs[i].tabIndex = on ? 0 : -1;
+      if (on) current = tabs[i];
+    }
+    if (current) panel.setAttribute("aria-labelledby", current.id);
+  }
+
+  function renderRest(day) {
+    var card = el("div", { class: "rest" });
+    var icon = el("div", { class: "pause", "aria-hidden": "true" });
+    icon.appendChild(el("span"));
+    icon.appendChild(el("span"));
+    card.appendChild(icon);
+    card.appendChild(el("p", { class: "lede", text: day.lede }));
+    card.appendChild(el("p", { class: "next", text: day.next }));
+    return card;
+  }
+
+  function renderGym(day, ymd) {
+    var wrap = el("div", { class: "lifts" });
+    var doneMap = marks(ymd);
+    day.exercises.forEach(function (exercise) {
+      var group = el("div", { class: "group" });
+      for (var set = 1; set <= SETS; set++) {
+        var id = exercise.id + "-" + set;
+        var on = doneMap[id] === true;
+        var btn = el("button", {
+          class: "set" + (on ? " is-done" : ""),
+          type: "button",
+          "data-track": "1",
+          "data-id": id,
+          "aria-pressed": on ? "true" : "false",
+          "aria-label": exercise.name + ", serie " + set + ", " + exercise.rx
+        });
+        btn.appendChild(el("span", { class: "n", text: String(set) }));
+        var body = el("span", { class: "body" });
+        body.appendChild(el("span", { class: "ex", text: exercise.name }));
+        body.appendChild(el("span", { class: "rx", text: exercise.rx }));
+        btn.appendChild(body);
+        btn.appendChild(makeTick());
+        group.appendChild(btn);
+      }
+      wrap.appendChild(group);
+    });
+    return wrap;
+  }
+
+  function renderBlock(day, ymd) {
+    var card = el("div", { class: "block" });
+    if (day.sequence) card.appendChild(el("p", { class: "seq-label", text: "Secuencia" }));
+    var list = el(day.sequence ? "ol" : "ul", { class: day.sequence ? "seq" : "notes" });
+    day.steps.forEach(function (step) {
+      list.appendChild(el("li", { text: step }));
+    });
+    card.appendChild(list);
+    var on = marks(ymd).session === true;
+    var btn = el("button", {
+      class: "block-done" + (on ? " is-done" : ""),
+      type: "button",
+      "data-track": "1",
+      "data-id": "session",
+      "aria-pressed": on ? "true" : "false"
+    });
+    btn.appendChild(makeTick());
+    btn.appendChild(el("span", { class: "btn-label", text: on ? "Sesión hecha" : "Marcar sesión hecha" }));
+    card.appendChild(btn);
+    return card;
+  }
+
+  function renderPanel() {
+    var ymd = selected;
+    var day = PROGRAM[weekdaySun0(ymd)];
+    panel.dataset.kind = day.kind;
+    panel.replaceChildren();
+
+    var when = formatLong(ymd);
+    if (ymd === today) when += " · hoy";
+    panel.appendChild(el("p", { class: "when", text: when }));
+
+    var head = el("div", { class: "head" });
+    var tags = el("div", { class: "tags" });
+    tags.appendChild(el("p", { class: "kicker", text: day.kicker }));
+    tags.appendChild(el("p", { class: "chip", text: day.chip }));
+    head.appendChild(tags);
+    head.appendChild(el("h2", { text: day.title }));
+    if (day.kind !== "rest") head.appendChild(el("p", { class: "lede", text: day.lede }));
+    panel.appendChild(head);
+
+    if (day.kind === "rest") {
+      panel.appendChild(renderRest(day));
+      return;
+    }
+
+    var bar = el("div", { class: "bar", "aria-hidden": "true" });
+    bar.appendChild(el("span"));
+    panel.appendChild(bar);
+    panel.appendChild(el("p", { class: "count" }));
+
+    panel.appendChild(day.kind === "gym" ? renderGym(day, ymd) : renderBlock(day, ymd));
+
+    var banner = el("p", { class: "banner", text: "Sesión completa" });
+    banner.hidden = true;
+    banner.setAttribute("aria-live", "polite");
+    panel.appendChild(banner);
+
+    panel.appendChild(el("button", {
+      class: "reset",
+      type: "button",
+      "data-reset": "1",
+      text: "Reiniciar este día"
+    }));
+
+    paintChrome();
+  }
+
+  function paintChrome() {
+    var buttons = panel.querySelectorAll("[data-track]");
+    var done = 0;
+    for (var i = 0; i < buttons.length; i++) {
+      if (buttons[i].getAttribute("aria-pressed") === "true") done += 1;
+    }
+    var total = buttons.length;
+    var count = panel.querySelector(".count");
+    var fill = panel.querySelector(".bar > span");
+    if (count && total) {
+      count.textContent = panel.dataset.kind === "block"
+        ? (done ? "Sesión hecha" : "Pendiente")
+        : (done + " de " + total + " series");
+    }
+    if (fill && total) fill.style.width = Math.round((done / total) * 100) + "%";
+
+    var banner = panel.querySelector(".banner");
+    if (banner) banner.hidden = !(total > 0 && done === total);
+
+    var groups = panel.querySelectorAll(".group");
+    for (var g = 0; g < groups.length; g++) {
+      var sets = groups[g].querySelectorAll("[data-track]");
+      var complete = sets.length > 0;
+      for (var s = 0; s < sets.length; s++) {
+        if (sets[s].getAttribute("aria-pressed") !== "true") complete = false;
+      }
+      groups[g].classList.toggle("is-complete", complete);
+    }
+
+    var resetBtn = panel.querySelector("[data-reset]");
+    if (resetBtn) {
+      if (!done) disarm();
+      resetBtn.disabled = done === 0;
+      resetBtn.textContent = armed ? ("¿Seguro? Borra el " + NAME[weekdaySun0(selected)]) : "Reiniciar este día";
+      resetBtn.classList.toggle("is-armed", armed);
+    }
+  }
+
+  function onReset(btn) {
+    if (btn.disabled) return;
+    if (!armed) {
+      armed = true;
+      paintChrome();
+      window.clearTimeout(armTimer);
+      armTimer = window.setTimeout(function () {
+        armed = false;
+        paintChrome();
+      }, 3800);
+      return;
+    }
+    disarm();
+    clearDay(selected);
+    renderPanel();
+  }
+
+  daysEl.addEventListener("click", function (event) {
+    var tab = event.target.closest('[role="tab"]');
+    if (!tab || tab.dataset.ymd === selected) return;
+    selected = tab.dataset.ymd;
+    disarm();
+    paintDays();
+    renderPanel();
+    window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+  });
+
+  daysEl.addEventListener("keydown", function (event) {
+    var keys = ["ArrowRight", "ArrowLeft", "Home", "End"];
+    if (keys.indexOf(event.key) === -1) return;
+    var tabs = Array.prototype.slice.call(daysEl.querySelectorAll('[role="tab"]'));
+    var index = tabs.indexOf(document.activeElement);
+    if (index < 0) return;
+    event.preventDefault();
+    var next = index;
+    if (event.key === "ArrowRight") next = (index + 1) % tabs.length;
+    if (event.key === "ArrowLeft") next = (index + tabs.length - 1) % tabs.length;
+    if (event.key === "Home") next = 0;
+    if (event.key === "End") next = tabs.length - 1;
+    tabs[next].focus();
+    tabs[next].click();
+  });
+
+  panel.addEventListener("click", function (event) {
+    var track = event.target.closest("[data-track]");
+    if (track && panel.contains(track)) {
+      var on = track.getAttribute("aria-pressed") !== "true";
+      setDone(selected, track.dataset.id, on);
+      track.setAttribute("aria-pressed", on ? "true" : "false");
+      track.classList.toggle("is-done", on);
+      var label = track.querySelector(".btn-label");
+      if (label) label.textContent = on ? "Sesión hecha" : "Marcar sesión hecha";
+      disarm();
+      paintChrome();
+      return;
+    }
+    var resetBtn = event.target.closest("[data-reset]");
+    if (resetBtn && panel.contains(resetBtn)) onReset(resetBtn);
+  });
+
+  window.addEventListener("storage", function (event) {
+    if (event.key !== STORAGE_KEY) return;
+    memory = null;
+    disarm();
+    renderPanel();
+  });
+
+  buildDays();
+  paintDays();
+  renderPanel();
+})();
+  </script>
+</body>
+</html>
