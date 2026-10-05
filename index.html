@@ -7,8 +7,12 @@
 <meta name="color-scheme" content="dark">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="DorIAn">
-<title>DorIAn</title>
+<meta name="apple-mobile-web-app-title" content="DorIAn APP">
+<title>DorIAn APP</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
 <style>
   :root {
     color-scheme: dark;
@@ -282,27 +286,88 @@
   .set {
     width: 100%;
     min-height: 72px;
-    padding: 12px 14px 12px 16px;
+    padding: 8px 10px 8px 12px;
     display: grid;
-    grid-template-columns: 40px minmax(0, 1fr) 44px;
-    column-gap: 12px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 8px;
     align-items: center;
-    text-align: left;
-    background: transparent;
-    border: 0;
     border-bottom: 1px solid var(--line-soft);
+    background: transparent;
   }
 
   .group .set:last-child { border-bottom: 0; }
 
-  .set:focus-visible {
+  .set.is-done { background: rgba(255, 159, 26, 0.1); }
+
+  .set-toggle {
+    min-width: 0;
+    min-height: 64px;
+    padding: 4px 2px 4px 4px;
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr) 44px;
+    column-gap: 10px;
+    align-items: center;
+    text-align: left;
+    background: transparent;
+    border: 0;
+    border-radius: 12px;
+  }
+
+  .set-toggle:focus-visible {
     outline: none;
     box-shadow: inset 0 0 0 3px #ffc14d;
   }
 
-  .set.is-done { background: rgba(255, 159, 26, 0.1); }
+  .set-toggle:active { background: rgba(255, 159, 26, 0.16); }
 
-  .set:active { background: rgba(255, 159, 26, 0.16); }
+  .weight {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: none;
+    padding-right: 2px;
+  }
+
+  .weight input {
+    width: 4.6em;
+    min-height: 52px;
+    padding: 8px 8px;
+    border-radius: 14px;
+    border: 1px solid var(--line);
+    background: #2c241c;
+    color: var(--text);
+    font: inherit;
+    font-size: 18px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+
+  .weight input::-webkit-outer-spin-button,
+  .weight input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .weight input::placeholder {
+    color: #8d7353;
+    font-weight: 700;
+    opacity: 1;
+  }
+
+  .weight input:focus {
+    border-color: var(--amber);
+    background: #33291f;
+  }
+
+  .weight .unit {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--soft);
+    min-width: 1.6em;
+  }
 
   .n {
     width: 40px;
@@ -534,7 +599,7 @@
 
   @media (hover: hover) {
     .day:not([aria-selected="true"]):hover { background: #2e261f; }
-    .set:hover { background: rgba(255, 159, 26, 0.06); }
+    .set-toggle:hover { background: rgba(255, 159, 26, 0.06); }
     .reset:not(:disabled):hover { border-color: var(--amber-2); }
   }
 
@@ -803,6 +868,76 @@
     writeStore();
   }
 
+  function kgKey(id) {
+    return id + ":kg";
+  }
+
+  function readKg(dayMap, id) {
+    var raw = dayMap[kgKey(id)];
+    if (typeof raw === "number" && isFinite(raw) && raw >= 0) return raw;
+    if (typeof raw === "string" && raw.trim() !== "") {
+      var n = Number(raw.replace(",", "."));
+      if (isFinite(n) && n >= 0) return n;
+    }
+    return null;
+  }
+
+  function setKg(ymd, id, kg) {
+    var all = readStore();
+    if (!all[ymd] || typeof all[ymd] !== "object" || Array.isArray(all[ymd])) all[ymd] = {};
+    var key = kgKey(id);
+    if (kg == null) delete all[ymd][key];
+    else all[ymd][key] = kg;
+    if (!Object.keys(all[ymd]).length) delete all[ymd];
+    writeStore();
+  }
+
+  function parseKgInput(value) {
+    var text = String(value == null ? "" : value).trim().replace(",", ".");
+    if (!text) return null;
+    var n = Number(text);
+    if (!isFinite(n) || n < 0) return null;
+    // keep one decimal when needed (e.g. 62.5)
+    return Math.round(n * 4) / 4;
+  }
+
+  function formatKg(n) {
+    if (n == null) return "";
+    return Number.isInteger(n) ? String(n) : String(n);
+  }
+
+  function lastSavedKg(exerciseId, setNum, skipYmd) {
+    var all = readStore();
+    var days = Object.keys(all).sort();
+    var exact = null;
+    var any = null;
+    for (var i = days.length - 1; i >= 0; i--) {
+      var ymd = days[i];
+      if (ymd === skipYmd) continue;
+      var day = all[ymd];
+      if (!day || typeof day !== "object" || Array.isArray(day)) continue;
+      var same = readKg(day, exerciseId + "-" + setNum);
+      if (same != null) {
+        exact = same;
+        break;
+      }
+      if (any == null) {
+        for (var s = SETS; s >= 1; s--) {
+          var found = readKg(day, exerciseId + "-" + s);
+          if (found != null) {
+            any = found;
+            break;
+          }
+        }
+      }
+    }
+    return exact != null ? exact : any;
+  }
+
+  function dayHasData(ymd) {
+    return Object.keys(marks(ymd)).length > 0;
+  }
+
   function clearDay(ymd) {
     var all = readStore();
     delete all[ymd];
@@ -874,8 +1009,13 @@
       for (var set = 1; set <= SETS; set++) {
         var id = exercise.id + "-" + set;
         var on = doneMap[id] === true;
+        var savedKg = readKg(doneMap, id);
+        var refKg = savedKg == null ? lastSavedKg(exercise.id, set, ymd) : null;
+
+        var row = el("div", { class: "set" + (on ? " is-done" : "") });
+
         var btn = el("button", {
-          class: "set" + (on ? " is-done" : ""),
+          class: "set-toggle",
           type: "button",
           "data-track": "1",
           "data-id": id,
@@ -888,7 +1028,26 @@
         body.appendChild(el("span", { class: "rx", text: exercise.rx }));
         btn.appendChild(body);
         btn.appendChild(makeTick());
-        group.appendChild(btn);
+        row.appendChild(btn);
+
+        var weight = el("label", { class: "weight" });
+        var input = el("input", {
+          type: "number",
+          inputmode: "decimal",
+          min: "0",
+          step: "0.5",
+          "data-kg": "1",
+          "data-id": id,
+          "aria-label": "Peso en kg, " + exercise.name + ", serie " + set
+        });
+        if (savedKg != null) input.value = formatKg(savedKg);
+        else if (refKg != null) input.setAttribute("placeholder", formatKg(refKg));
+        else input.setAttribute("placeholder", "—");
+        weight.appendChild(input);
+        weight.appendChild(el("span", { class: "unit", text: "kg", "aria-hidden": "true" }));
+        row.appendChild(weight);
+
+        group.appendChild(row);
       }
       wrap.appendChild(group);
     });
@@ -994,8 +1153,9 @@
 
     var resetBtn = panel.querySelector("[data-reset]");
     if (resetBtn) {
-      if (!done) disarm();
-      resetBtn.disabled = done === 0;
+      var hasData = dayHasData(selected);
+      if (!hasData) disarm();
+      resetBtn.disabled = !hasData;
       resetBtn.textContent = armed ? ("¿Seguro? Borra el " + NAME[weekdaySun0(selected)]) : "Reiniciar este día";
       resetBtn.classList.toggle("is-armed", armed);
     }
@@ -1050,7 +1210,9 @@
       var on = track.getAttribute("aria-pressed") !== "true";
       setDone(selected, track.dataset.id, on);
       track.setAttribute("aria-pressed", on ? "true" : "false");
-      track.classList.toggle("is-done", on);
+      var row = track.closest(".set");
+      if (row) row.classList.toggle("is-done", on);
+      else track.classList.toggle("is-done", on);
       var label = track.querySelector(".btn-label");
       if (label) label.textContent = on ? "Sesión hecha" : "Marcar sesión hecha";
       disarm();
@@ -1059,6 +1221,41 @@
     }
     var resetBtn = event.target.closest("[data-reset]");
     if (resetBtn && panel.contains(resetBtn)) onReset(resetBtn);
+  });
+
+  function commitKgInput(input) {
+    if (!input || !panel.contains(input) || !input.hasAttribute("data-kg")) return;
+    var id = input.dataset.id;
+    if (!id) return;
+    var kg = parseKgInput(input.value);
+    if (kg == null) {
+      input.value = "";
+      setKg(selected, id, null);
+      var bits = id.split("-");
+      var setNum = Number(bits.pop());
+      var exerciseId = bits.join("-");
+      var ref = lastSavedKg(exerciseId, setNum, selected);
+      input.setAttribute("placeholder", ref != null ? formatKg(ref) : "—");
+    } else {
+      input.value = formatKg(kg);
+      setKg(selected, id, kg);
+    }
+    disarm();
+    paintChrome();
+  }
+
+  panel.addEventListener("change", function (event) {
+    var input = event.target.closest("input[data-kg]");
+    if (input) commitKgInput(input);
+  });
+
+  panel.addEventListener("keydown", function (event) {
+    var input = event.target.closest("input[data-kg]");
+    if (!input) return;
+    if (event.key === "Enter") {
+      event.preventDefault();
+      input.blur();
+    }
   });
 
   window.addEventListener("storage", function (event) {
