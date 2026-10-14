@@ -650,10 +650,208 @@
     cursor: pointer;
   }
 
+  .plan-line {
+    margin: 4px 0 0;
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--soft);
+  }
+
+  .views {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin: 0 0 14px;
+  }
+
+  .view-btn {
+    min-height: 48px;
+    border-radius: 14px;
+    border: 1px solid var(--line);
+    background: var(--card-2);
+    font-size: 16px;
+    font-weight: 800;
+  }
+
+  .view-btn[aria-pressed="true"] {
+    background: var(--amber);
+    border-color: var(--amber);
+    color: var(--ink);
+  }
+
+  .save-session {
+    width: 100%;
+    min-height: 64px;
+    margin-top: 14px;
+    padding: 12px 16px;
+    border: 0;
+    border-radius: 16px;
+    background: var(--amber);
+    color: var(--ink);
+    font-size: 18px;
+    font-weight: 800;
+  }
+
+  .save-session.is-armed {
+    background: transparent;
+    color: #ffc14d;
+    box-shadow: inset 0 0 0 2px var(--amber);
+  }
+
+  .save-session:active { transform: scale(0.99); }
+
+  .tools { margin-top: 8px; }
+
+  .history h2 { margin-top: 0; }
+
+  .history h3 {
+    margin: 22px 0 0;
+    font-size: 22px;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  .section-help {
+    margin: 6px 0 0;
+    font-size: 15px;
+    line-height: 1.4;
+    color: var(--soft);
+    font-weight: 700;
+  }
+
+  .hist-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  .hist-item {
+    width: 100%;
+    min-height: 72px;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    text-align: left;
+    border-radius: 18px;
+    border: 1px solid var(--line);
+    background: var(--card);
+  }
+
+  .hist-item:active { background: #221c17; }
+
+  .hist-meta {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--soft);
+    line-height: 1.3;
+  }
+
+  .field-label {
+    display: block;
+    margin-top: 12px;
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--muted);
+  }
+
+  .select {
+    display: block;
+    width: 100%;
+    min-height: 52px;
+    margin-top: 8px;
+    padding: 8px 12px;
+    border-radius: 14px;
+    border: 1px solid var(--line);
+    background: #2c241c;
+    color: var(--text);
+    font: inherit;
+    font-weight: 700;
+  }
+
+  .chart-card {
+    margin-top: 12px;
+    padding: 12px 12px 8px;
+    border-radius: 18px;
+    background: var(--card);
+    border: 1px solid var(--line);
+  }
+
+  .chart-card svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .chart-caption {
+    margin: 8px 0 0;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--soft);
+  }
+
+  .evo-list {
+    list-style: none;
+    margin: 8px 0 0;
+    padding: 0;
+  }
+
+  .evo-list li {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    padding: 8px 0;
+    border-top: 1px solid var(--line-soft);
+    font-size: 15px;
+    line-height: 1.35;
+  }
+
+  .evo-kg {
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .back-btn { margin-top: 0; margin-bottom: 8px; }
+
+  .history .ex,
+  .history .lede,
+  .gate-card .lede { overflow-wrap: anywhere; }
+
+  .gate {
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    background: rgba(8, 6, 5, 0.76);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 16px;
+  }
+
+  .gate[hidden] { display: none; }
+
+  .gate-card {
+    width: min(100%, 480px);
+    margin-bottom: env(safe-area-inset-bottom);
+    padding: 18px 16px 16px;
+    border-radius: 22px;
+    background: var(--card);
+    border: 1px solid var(--line);
+  }
+
+  .gate-card h2 { font-size: 26px; }
+
+  .gate-apply:disabled { opacity: 0.38; cursor: default; }
+
   @media (hover: hover) {
     .day:not([aria-selected="true"]):hover { background: #2e261f; }
     .set-toggle:hover { background: rgba(255, 159, 26, 0.06); }
     .reset:not(:disabled):hover { border-color: var(--amber-2); }
+    .view-btn:not([aria-pressed="true"]):hover { border-color: var(--amber-2); }
+    .hist-item:hover { border-color: var(--amber); }
   }
 
   @media (max-width: 359px) {
@@ -679,17 +877,34 @@
       <div>
         <h1>Dor<span class="ia">IA</span>n</h1>
         <p class="goal">Objetivo actual: mantenerse</p>
+        <p class="plan-line" id="plan-line"></p>
       </div>
     </header>
+    <nav class="views" aria-label="Secciones">
+      <button class="view-btn" type="button" id="view-train" aria-pressed="true">Entreno</button>
+      <button class="view-btn" type="button" id="view-history" aria-pressed="false">Historial</button>
+    </nav>
     <div class="week">
       <p class="week-label" id="week-label"></p>
       <div class="days" id="days" role="tablist" aria-label="Días de la semana"></div>
     </div>
     <main id="panel" role="tabpanel" tabindex="-1"></main>
+    <div id="history" class="history" hidden></div>
     <div class="tools">
+      <label class="reset import-hit" id="load-plan">Cargar plan<input id="plan-file" class="file-input" type="file" accept="application/json,.json"></label>
       <button class="reset" type="button" id="export-backup">Exportar copia</button>
       <label class="reset import-hit" id="import-backup">Importar copia<input id="import-file" class="file-input" type="file" accept="application/json,.json"></label>
       <p id="backup-note" class="backup-note" role="status" hidden></p>
+    </div>
+    <div id="plan-gate" class="gate" hidden>
+      <div class="gate-card" role="dialog" aria-modal="true" aria-labelledby="gate-title">
+        <h2 id="gate-title">Copia obligatoria</h2>
+        <p class="lede" id="gate-text"></p>
+        <button class="block-done" type="button" id="gate-download">Descargar copia</button>
+        <button class="block-done gate-apply" type="button" id="gate-apply" disabled>Aplicar plan</button>
+        <button class="reset" type="button" id="gate-cancel">Cancelar</button>
+        <p id="gate-note" class="backup-note" role="status" hidden></p>
+      </div>
     </div>
     <noscript><p class="lede">Activa JavaScript para ver la sesión de hoy.</p></noscript>
   </div>
@@ -698,7 +913,11 @@
   "use strict";
 
   // Rules: never change STORAGE_KEY, never reuse an id for a different exercise, new exercise = new id.
+  // Sessions and archived plans live only in HISTORY_KEY, so a new plan never clears logged days.
   var STORAGE_KEY = "dorian.dayProgress.v1";
+  var HISTORY_KEY = "dorian.history.v1";
+  var BUILTIN_PLAN_ID = "plan-inicial";
+  var BUILTIN_PLAN_NAME = "Plan inicial";
   var SETS = 4;
 
   var SHORT = ["dom", "lun", "mar", "mié", "jue", "vie", "sáb"];
@@ -829,11 +1048,20 @@
   };
 
   var memory = null;
+  var historyMemory = null;
   var armed = false;
   var armTimer = 0;
+  var saveArmed = false;
+  var saveTimer = 0;
   var today = madridToday();
   var selected = today;
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var viewName = "train";
+  var historyMode = "list";
+  var historyRef = null;
+  var chartExerciseId = "";
+  var pendingPlan = null;
+  var planBackupDone = false;
 
   var weekLabel = document.getElementById("week-label");
   var daysEl = document.getElementById("days");
@@ -1273,9 +1501,10 @@
 
   function renderPanel() {
     var ymd = selected;
-    var day = PROGRAM[weekdaySun0(ymd)];
+    var day = dayPlan(ymd);
     panel.dataset.kind = day.kind;
     panel.replaceChildren();
+    disarmSave();
 
     var when = formatLong(ymd);
     if (ymd === today) when += " · hoy";
@@ -1306,6 +1535,16 @@
     banner.hidden = true;
     banner.setAttribute("aria-live", "polite");
     panel.appendChild(banner);
+
+    panel.appendChild(el("button", {
+      class: "save-session",
+      type: "button",
+      "data-save": "1",
+      text: sessionForDate(ymd) ? "Actualizar entrenamiento" : "Guardar entrenamiento"
+    }));
+    var saveNote = el("p", { class: "backup-note", "data-save-note": "1", role: "status" });
+    saveNote.hidden = true;
+    panel.appendChild(saveNote);
 
     panel.appendChild(el("button", {
       class: "reset",
@@ -1385,6 +1624,7 @@
     if (!tab || tab.dataset.ymd === selected) return;
     selected = tab.dataset.ymd;
     disarm();
+    disarmSave();
     paintDays();
     renderPanel();
     window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
@@ -1419,6 +1659,11 @@
       if (label) label.textContent = on ? "Sesión hecha" : "Marcar sesión hecha";
       disarm();
       paintChrome();
+      return;
+    }
+    var saveBtn = event.target.closest("[data-save]");
+    if (saveBtn && panel.contains(saveBtn)) {
+      onSave(saveBtn);
       return;
     }
     var resetBtn = event.target.closest("[data-reset]");
@@ -1461,11 +1706,1211 @@
   });
 
   window.addEventListener("storage", function (event) {
+    if (event.key === HISTORY_KEY) {
+      historyMemory = null;
+      disarm();
+      disarmSave();
+      updatePlanLine();
+      renderPanel();
+      if (viewName === "history") renderHistory();
+      return;
+    }
     if (event.key !== STORAGE_KEY) return;
     memory = null;
     disarm();
     renderPanel();
   });
+
+  function clip(value, max) {
+    if (typeof value !== "string") return "";
+    var text = value.replace(/\s+/g, " ").trim();
+    if (!text) return "";
+    return text.length > max ? text.slice(0, max) : text;
+  }
+
+  function clone(obj) {
+    return JSON.parse(JSON.stringify(obj));
+  }
+
+  function isBackupMetaKey(key) {
+    return key === "_dorianVersion" || key === "_dorianExportedAt" || key === "_dorianHistory";
+  }
+
+  function backupPayload() {
+    var payload = {};
+    var progress = readStore();
+    Object.keys(progress).forEach(function (key) {
+      if (isUnsafeKey(key) || isBackupMetaKey(key)) return;
+      payload[key] = progress[key];
+    });
+    var hist = readHistory();
+    payload._dorianVersion = 2;
+    payload._dorianExportedAt = new Date().toISOString();
+    payload._dorianHistory = JSON.stringify({
+      sessions: hist.sessions,
+      archive: hist.archive,
+      current: hist.current
+    });
+    return payload;
+  }
+
+  function emptyHistory() {
+    return { sessions: [], archive: [], current: null };
+  }
+
+  function readHistory() {
+    if (historyMemory) return historyMemory;
+    try {
+      var raw = localStorage.getItem(HISTORY_KEY);
+      var parsed = raw ? JSON.parse(raw) : null;
+      historyMemory = normalizeStoredHistory(parsed);
+    } catch (err) {
+      historyMemory = emptyHistory();
+    }
+    return historyMemory;
+  }
+
+  function writeHistory() {
+    try {
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(readHistory()));
+      return true;
+    } catch (err) {
+      return false;
+    }
+  }
+
+  function normalizeStoredHistory(parsed) {
+    var base = emptyHistory();
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return base;
+    if (Array.isArray(parsed.sessions)) {
+      var seenSession = {};
+      parsed.sessions.forEach(function (raw) {
+        var session = sanitizeSession(raw);
+        if (!session) return;
+        if (seenSession["id:" + session.id] || seenSession["d:" + session.date]) return;
+        seenSession["id:" + session.id] = true;
+        seenSession["d:" + session.date] = true;
+        base.sessions.push(session);
+      });
+    }
+    if (Array.isArray(parsed.archive)) {
+      var seenPlan = {};
+      parsed.archive.forEach(function (raw) {
+        var plan = sanitizePlan(raw);
+        if (!plan) return;
+        var sig = String(plan.id) + "|" + String(plan.activeFrom || "") + "|" + String(plan.activeUntil || "");
+        if (seenPlan[sig]) return;
+        seenPlan[sig] = true;
+        base.archive.push(plan);
+      });
+    }
+    if (parsed.current) base.current = sanitizePlan(parsed.current);
+    return base;
+  }
+
+  function sanitizeSession(raw) {
+    if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
+    var date = typeof raw.date === "string" ? raw.date : "";
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return null;
+    var id = typeof raw.id === "string" ? raw.id.trim() : "";
+    if (!id || isUnsafeKey(id) || id.length > 80) id = "ses-" + date;
+    var exercises = [];
+    if (Array.isArray(raw.exercises)) {
+      for (var i = 0; i < raw.exercises.length && exercises.length < 24; i++) {
+        var ex = raw.exercises[i];
+        if (!ex || typeof ex !== "object") continue;
+        var exId = typeof ex.id === "string" ? ex.id.trim() : "";
+        var name = clip(ex.name, 120);
+        if (!exId || !name || isUnsafeKey(exId) || isMetaKey(exId) || !/^[a-zA-Z0-9_-]{1,40}$/.test(exId)) continue;
+        var sets = [];
+        if (Array.isArray(ex.sets)) {
+          for (var s = 0; s < ex.sets.length && sets.length < 12; s++) {
+            var set = ex.sets[s];
+            if (!set || typeof set !== "object") continue;
+            var n = Number(set.n);
+            if (!isFinite(n) || n < 1 || n > 20) continue;
+            var kg = null;
+            if (typeof set.kg === "number" && isFinite(set.kg) && set.kg >= 0 && set.kg < 2000) kg = set.kg;
+            sets.push({
+              n: n,
+              reps: clip(typeof set.reps === "string" ? set.reps : "", 160),
+              kg: kg,
+              done: set.done === true
+            });
+          }
+        }
+        exercises.push({ id: exId, name: name, rx: clip(ex.rx, 160), sets: sets });
+      }
+    }
+    var session = {
+      id: id,
+      date: date,
+      savedAt: clip(typeof raw.savedAt === "string" ? raw.savedAt : "", 40),
+      planId: clip(typeof raw.planId === "string" ? raw.planId : "", 64),
+      planName: clip(typeof raw.planName === "string" ? raw.planName : "", 80),
+      dayLabel: clip(typeof raw.dayLabel === "string" ? raw.dayLabel : "", 20),
+      kind: raw.kind === "gym" || raw.kind === "block" || raw.kind === "rest" ? raw.kind : "gym",
+      title: clip(typeof raw.title === "string" ? raw.title : "", 80),
+      kicker: clip(typeof raw.kicker === "string" ? raw.kicker : "", 40),
+      chip: clip(typeof raw.chip === "string" ? raw.chip : "", 40),
+      exercises: exercises
+    };
+    var weekday = Number(raw.weekday);
+    if (isFinite(weekday) && weekday >= 0 && weekday <= 6) session.weekday = weekday;
+    if (Array.isArray(raw.steps)) {
+      session.steps = [];
+      for (var t = 0; t < raw.steps.length && session.steps.length < 30; t++) {
+        var step = clip(raw.steps[t], 200);
+        if (step) session.steps.push(step);
+      }
+    }
+    if (raw.sessionDone === true) session.sessionDone = true;
+    return session;
+  }
+
+  function sanitizeProgramLoose(program) {
+    if (!program || typeof program !== "object" || Array.isArray(program)) return null;
+    var out = {};
+    var count = 0;
+    for (var d = 0; d <= 6; d++) {
+      var src = program[d] != null ? program[d] : program[String(d)];
+      if (!src || typeof src !== "object" || Array.isArray(src)) continue;
+      var kind = src.kind === "gym" || src.kind === "block" || src.kind === "rest" ? src.kind : "";
+      if (!kind) continue;
+      var day = {
+        kind: kind,
+        kicker: clip(src.kicker, 40),
+        chip: clip(src.chip, 40),
+        title: clip(src.title, 80),
+        lede: clip(src.lede, 400)
+      };
+      if (kind === "gym" && Array.isArray(src.exercises)) {
+        day.exercises = [];
+        for (var i = 0; i < src.exercises.length && day.exercises.length < 24; i++) {
+          var ex = src.exercises[i];
+          if (!ex || typeof ex !== "object") continue;
+          var exId = typeof ex.id === "string" ? ex.id.trim() : "";
+          var exName = clip(ex.name, 120);
+          if (!exId || !exName || isUnsafeKey(exId) || isMetaKey(exId) || !/^[a-zA-Z0-9_-]{1,40}$/.test(exId)) continue;
+          day.exercises.push({ id: exId, name: exName, rx: clip(ex.rx, 160) });
+        }
+      }
+      if (kind === "block" && Array.isArray(src.steps)) {
+        day.steps = [];
+        for (var s = 0; s < src.steps.length && day.steps.length < 30; s++) {
+          var step = clip(src.steps[s], 200);
+          if (step) day.steps.push(step);
+        }
+        if (src.sequence === true) day.sequence = true;
+      }
+      if (kind === "rest") day.next = clip(src.next, 200);
+      out[d] = day;
+      count += 1;
+    }
+    return count ? out : null;
+  }
+
+  function sanitizePlan(raw) {
+    if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
+    var id = typeof raw.id === "string" ? raw.id.trim() : "";
+    if (!/^[a-zA-Z0-9_-]{1,64}$/.test(id) || isUnsafeKey(id)) return null;
+    var program = sanitizeProgramLoose(raw.program);
+    if (!program) return null;
+    var activeFrom = /^\d{4}-\d{2}-\d{2}$/.test(raw.activeFrom || "") ? raw.activeFrom : "";
+    var activeUntil = /^\d{4}-\d{2}-\d{2}$/.test(raw.activeUntil || "") ? raw.activeUntil : null;
+    return {
+      id: id,
+      name: clip(raw.name, 80) || "Plan",
+      activeFrom: activeFrom,
+      activeUntil: activeUntil,
+      program: program
+    };
+  }
+
+  function earliestProgressDate() {
+    var keys = Object.keys(readStore()).filter(function (key) {
+      return /^\d{4}-\d{2}-\d{2}$/.test(key);
+    }).sort();
+    return keys.length ? keys[0] : "";
+  }
+
+  function currentRecord() {
+    var hist = readHistory();
+    if (hist.current && hist.current.program) return hist.current;
+    return {
+      id: BUILTIN_PLAN_ID,
+      name: BUILTIN_PLAN_NAME,
+      activeFrom: earliestProgressDate() || madridToday(),
+      activeUntil: null,
+      program: PROGRAM
+    };
+  }
+
+  function activeProgram() {
+    var current = readHistory().current;
+    if (current && current.program) return current.program;
+    return PROGRAM;
+  }
+
+  function programDayAt(program, weekday) {
+    if (!program) return null;
+    if (program[weekday] != null) return program[weekday];
+    return program[String(weekday)] || null;
+  }
+
+  function dayPlan(ymd) {
+    var day = programDayAt(activeProgram(), weekdaySun0(ymd));
+    if (!day || typeof day !== "object") {
+      return {
+        kind: "rest",
+        kicker: "Libre",
+        chip: "Sin sesión",
+        title: "Descanso",
+        lede: "Día libre. No hay sesión programada.",
+        next: ""
+      };
+    }
+    return day;
+  }
+
+  function updatePlanLine() {
+    var node = document.getElementById("plan-line");
+    if (!node) return;
+    node.textContent = "Plan: " + currentRecord().name;
+  }
+
+  function knownExerciseName(id) {
+    var d;
+    for (d = 0; d <= 6; d++) {
+      var builtin = programDayAt(PROGRAM, d);
+      if (!builtin || !builtin.exercises) continue;
+      for (var j = 0; j < builtin.exercises.length; j++) {
+        if (builtin.exercises[j].id === id) return builtin.exercises[j].name;
+      }
+    }
+    if (Object.prototype.hasOwnProperty.call(RETIRED, id)) return RETIRED[id];
+    var hist = readHistory();
+    var sources = [];
+    if (hist.current && hist.current.program) sources.push(hist.current.program);
+    hist.archive.forEach(function (plan) {
+      if (plan && plan.program) sources.push(plan.program);
+    });
+    for (var s = 0; s < sources.length; s++) {
+      for (d = 0; d <= 6; d++) {
+        var item = programDayAt(sources[s], d);
+        if (!item || !item.exercises) continue;
+        for (var e = 0; e < item.exercises.length; e++) {
+          if (item.exercises[e] && item.exercises[e].id === id && item.exercises[e].name) return item.exercises[e].name;
+        }
+      }
+    }
+    var sessions = hist.sessions;
+    for (var n = 0; n < sessions.length; n++) {
+      var list = sessions[n].exercises || [];
+      for (var m = 0; m < list.length; m++) {
+        if (list[m] && list[m].id === id && list[m].name) return list[m].name;
+      }
+    }
+    return null;
+  }
+
+  function sessionForDate(ymd) {
+    var list = readHistory().sessions;
+    for (var i = 0; i < list.length; i++) {
+      if (list[i] && list[i].date === ymd) return list[i];
+    }
+    return null;
+  }
+
+  function buildSession(ymd) {
+    var day = dayPlan(ymd);
+    var plan = currentRecord();
+    var doneMap = marks(ymd);
+    var weekday = weekdaySun0(ymd);
+    var session = {
+      id: "ses-" + ymd,
+      date: ymd,
+      savedAt: new Date().toISOString(),
+      planId: plan.id,
+      planName: plan.name,
+      weekday: weekday,
+      dayLabel: NAME[weekday] || "",
+      kind: day.kind,
+      title: day.title || "",
+      kicker: day.kicker || "",
+      chip: day.chip || "",
+      exercises: []
+    };
+    if (day.kind === "gym" && Array.isArray(day.exercises)) {
+      day.exercises.forEach(function (exercise) {
+        var sets = [];
+        for (var n = 1; n <= SETS; n++) {
+          var setId = exercise.id + "-" + n;
+          sets.push({
+            n: n,
+            reps: exercise.rx || "",
+            kg: readKg(doneMap, setId),
+            done: doneMap[setId] === true
+          });
+        }
+        session.exercises.push({
+          id: exercise.id,
+          name: exercise.name,
+          rx: exercise.rx || "",
+          sets: sets
+        });
+      });
+    } else if (day.kind === "block") {
+      session.steps = (day.steps || []).slice();
+      session.sessionDone = doneMap.session === true;
+    }
+    return session;
+  }
+
+  function upsertSession(session) {
+    var hist = readHistory();
+    var idx = -1;
+    for (var i = 0; i < hist.sessions.length; i++) {
+      var item = hist.sessions[i];
+      if (!item) continue;
+      if (item.id === session.id || item.date === session.date) {
+        idx = i;
+        break;
+      }
+    }
+    if (idx >= 0) hist.sessions[idx] = session;
+    else hist.sessions.push(session);
+    return writeHistory();
+  }
+
+  function disarmSave() {
+    saveArmed = false;
+    window.clearTimeout(saveTimer);
+    saveTimer = 0;
+  }
+
+  function onSave(btn) {
+    var existing = sessionForDate(selected);
+    if (existing && !saveArmed) {
+      saveArmed = true;
+      btn.textContent = "¿Sobrescribir este día?";
+      btn.classList.add("is-armed");
+      window.clearTimeout(saveTimer);
+      saveTimer = window.setTimeout(function () {
+        saveArmed = false;
+        var current = panel.querySelector("[data-save]");
+        if (current) {
+          current.textContent = "Actualizar entrenamiento";
+          current.classList.remove("is-armed");
+        }
+      }, 3800);
+      return;
+    }
+    disarmSave();
+    var inputs = panel.querySelectorAll("input[data-kg]");
+    for (var i = 0; i < inputs.length; i++) {
+      if (String(inputs[i].value || "").trim() !== "") commitKgInput(inputs[i]);
+    }
+    var session = buildSession(selected);
+    var saved = upsertSession(session);
+    btn.classList.remove("is-armed");
+    btn.textContent = saved ? "Entrenamiento guardado" : "No se pudo guardar";
+    var note = panel.querySelector("[data-save-note]");
+    if (note) {
+      note.hidden = false;
+      note.textContent = saved
+        ? (existing ? "Día actualizado en el historial" : "Guardado en el historial")
+        : "No se pudo guardar el historial en este navegador.";
+    }
+  }
+
+  function planSignature(plan) {
+    return String(plan.id || "") + "|" + String(plan.activeFrom || "") + "|" + String(plan.activeUntil || "");
+  }
+
+  function archiveHasId(id) {
+    var archive = readHistory().archive;
+    for (var i = 0; i < archive.length; i++) {
+      if (archive[i] && archive[i].id === id) return true;
+    }
+    return false;
+  }
+
+  function snapshotPlan(record, activeUntil) {
+    return {
+      id: record.id,
+      name: record.name,
+      activeFrom: record.activeFrom || madridToday(),
+      activeUntil: activeUntil || null,
+      program: clone(record.program)
+    };
+  }
+
+  function archiveEndDate(activeFrom, switchDay) {
+    var until = addDays(switchDay || madridToday(), -1);
+    if (!activeFrom || until < activeFrom) return activeFrom || switchDay || madridToday();
+    return until;
+  }
+
+  function looksLikeProgram(obj) {
+    if (!obj || typeof obj !== "object" || Array.isArray(obj)) return false;
+    for (var d = 0; d <= 6; d++) {
+      var day = programDayAt(obj, d);
+      if (day && typeof day === "object" && (day.kind === "gym" || day.kind === "block" || day.kind === "rest")) return true;
+    }
+    return false;
+  }
+
+  function newPlanId() {
+    return "plan-" + madridToday().replace(/-/g, "") + "-" + Math.random().toString(36).slice(2, 8);
+  }
+
+  function planIdTaken(id) {
+    if (!id) return false;
+    var hist = readHistory();
+    if (hist.current && hist.current.id === id) return true;
+    return archiveHasId(id);
+  }
+
+  function normalizeProgram(program) {
+    var loose = sanitizeProgramLoose(program);
+    if (!loose) return { error: "El archivo del plan no es válido." };
+    var seen = {};
+    var workoutDays = 0;
+    for (var d = 0; d <= 6; d++) {
+      var day = loose[d];
+      if (!day) continue;
+      if (day.kind === "gym") {
+        if (!day.exercises || !day.exercises.length) return { error: "El archivo del plan no es válido." };
+        workoutDays += 1;
+        for (var i = 0; i < day.exercises.length; i++) {
+          var ex = day.exercises[i];
+          if (seen[ex.id] && seen[ex.id] !== ex.name) {
+            return { error: "No se cargó el plan. El id «" + ex.id + "» ya es «" + seen[ex.id] + "». Para un ejercicio distinto usa un id nuevo." };
+          }
+          var known = knownExerciseName(ex.id);
+          if (known && known !== ex.name) {
+            return { error: "No se cargó el plan. El id «" + ex.id + "» ya es «" + known + "». Para un ejercicio distinto usa un id nuevo." };
+          }
+          seen[ex.id] = ex.name;
+        }
+      } else if (day.kind === "block") {
+        if (!day.steps || !day.steps.length) return { error: "El archivo del plan no es válido." };
+        workoutDays += 1;
+      }
+    }
+    if (!workoutDays) return { error: "El archivo del plan no es válido." };
+    return { program: loose };
+  }
+
+  function parsePlanDocument(obj) {
+    var src = obj;
+    if (src && src.plan && typeof src.plan === "object" && !Array.isArray(src.plan)) src = src.plan;
+    var programSrc = null;
+    var name = "";
+    var id = "";
+    if (src && typeof src === "object" && !Array.isArray(src) && (src.program || src.days)) {
+      programSrc = src.program || src.days;
+      name = clip(typeof src.name === "string" ? src.name : "", 80);
+      id = typeof src.id === "string" ? src.id.trim() : "";
+    } else if (looksLikeProgram(src)) {
+      programSrc = src;
+    }
+    var normalized = normalizeProgram(programSrc);
+    if (!normalized || normalized.error) return { error: (normalized && normalized.error) || "El archivo del plan no es válido." };
+    var currentProg = sanitizeProgramLoose(activeProgram());
+    if (currentProg && JSON.stringify(currentProg) === JSON.stringify(normalized.program)) {
+      return { error: "Este plan es igual al que ya usas." };
+    }
+    if (!name) name = "Plan importado";
+    if (!/^[a-zA-Z0-9_-]{1,64}$/.test(id) || id === BUILTIN_PLAN_ID || planIdTaken(id)) id = newPlanId();
+    return { id: id, name: name, program: normalized.program };
+  }
+
+  function mergeHistoryImport(incoming) {
+    if (!incoming || typeof incoming !== "object" || Array.isArray(incoming)) return;
+    var hist = readHistory();
+    var seenSess = {};
+    hist.sessions.forEach(function (session) {
+      if (session && session.id) seenSess["id:" + session.id] = true;
+      if (session && session.date) seenSess["d:" + session.date] = true;
+    });
+    var sessions = Array.isArray(incoming.sessions) ? incoming.sessions : [];
+    sessions.forEach(function (raw) {
+      var session = sanitizeSession(raw);
+      if (!session) return;
+      if (seenSess["id:" + session.id] || seenSess["d:" + session.date]) return;
+      hist.sessions.push(session);
+      seenSess["id:" + session.id] = true;
+      seenSess["d:" + session.date] = true;
+    });
+    var seenPlan = {};
+    hist.archive.forEach(function (plan) {
+      seenPlan[planSignature(plan)] = true;
+    });
+    var archived = Array.isArray(incoming.archive) ? incoming.archive : [];
+    archived.forEach(function (raw) {
+      var plan = sanitizePlan(raw);
+      if (!plan) return;
+      var sig = planSignature(plan);
+      if (seenPlan[sig]) return;
+      hist.archive.push(plan);
+      seenPlan[sig] = true;
+    });
+    var incomingCurrent = sanitizePlan(incoming.current);
+    if (incomingCurrent) {
+      if (!hist.current) {
+        if (incomingCurrent.id !== BUILTIN_PLAN_ID && !archiveHasId(BUILTIN_PLAN_ID)) {
+          var previous = currentRecord();
+          var builtin = snapshotPlan(previous, archiveEndDate(previous.activeFrom, incomingCurrent.activeFrom || madridToday()));
+          var bsig = planSignature(builtin);
+          if (!seenPlan[bsig]) {
+            hist.archive.push(builtin);
+            seenPlan[bsig] = true;
+          }
+        }
+        hist.current = incomingCurrent;
+      } else if (hist.current.id !== incomingCurrent.id || (hist.current.activeFrom || "") !== (incomingCurrent.activeFrom || "")) {
+        if (!incomingCurrent.activeUntil) incomingCurrent.activeUntil = incomingCurrent.activeFrom || madridToday();
+        var csig = planSignature(incomingCurrent);
+        if (!seenPlan[csig] && planSignature(hist.current) !== csig) hist.archive.push(incomingCurrent);
+      }
+    }
+    writeHistory();
+  }
+
+  function closeGate() {
+    var gate = document.getElementById("plan-gate");
+    if (gate) gate.hidden = true;
+    document.body.style.overflow = "";
+    pendingPlan = null;
+    planBackupDone = false;
+  }
+
+  function openGate(plan) {
+    pendingPlan = plan;
+    planBackupDone = false;
+    var gate = document.getElementById("plan-gate");
+    var text = document.getElementById("gate-text");
+    var applyBtn = document.getElementById("gate-apply");
+    var note = document.getElementById("gate-note");
+    var previous = currentRecord();
+    if (text) {
+      text.textContent = "Antes de pasar a «" + plan.name + "» hay que descargar una copia completa: progreso, historial y planes archivados. El plan «" + previous.name + "» se archivará y los pesos ya registrados se conservan.";
+    }
+    if (applyBtn) applyBtn.disabled = true;
+    if (note) {
+      note.hidden = true;
+      note.textContent = "";
+    }
+    if (gate) gate.hidden = false;
+    document.body.style.overflow = "hidden";
+    var download = document.getElementById("gate-download");
+    if (download) download.focus();
+  }
+
+  function onGateDownload() {
+    try {
+      exportBackup();
+    } catch (err) {
+      var fail = document.getElementById("gate-note");
+      if (fail) {
+        fail.hidden = false;
+        fail.textContent = "No se pudo descargar la copia.";
+      }
+      return;
+    }
+    planBackupDone = true;
+    var applyBtn = document.getElementById("gate-apply");
+    if (applyBtn) {
+      applyBtn.disabled = false;
+      applyBtn.focus();
+    }
+    var note = document.getElementById("gate-note");
+    if (note) {
+      note.hidden = false;
+      note.textContent = "Copia descargada. Ya puedes aplicar el plan.";
+    }
+  }
+
+  function applyPendingPlan() {
+    if (!planBackupDone || !pendingPlan) return;
+    var applyBtn = document.getElementById("gate-apply");
+    if (applyBtn) applyBtn.disabled = true;
+    var hist = readHistory();
+    var previous = currentRecord();
+    var archived = snapshotPlan(previous, archiveEndDate(previous.activeFrom, madridToday()));
+    var sig = planSignature(archived);
+    var exists = false;
+    for (var i = 0; i < hist.archive.length; i++) {
+      if (planSignature(hist.archive[i]) === sig) exists = true;
+    }
+    if (!exists) hist.archive.push(archived);
+    hist.current = {
+      id: pendingPlan.id,
+      name: pendingPlan.name,
+      activeFrom: madridToday(),
+      activeUntil: null,
+      program: clone(pendingPlan.program)
+    };
+    var saved = writeHistory();
+    pendingPlan = null;
+    planBackupDone = false;
+    closeGate();
+    updatePlanLine();
+    disarm();
+    disarmSave();
+    renderPanel();
+    if (viewName === "history") renderHistory();
+    showBackupNote(saved ? "Plan aplicado. El anterior quedó en el archivo." : "No se pudo guardar el archivo del plan.");
+  }
+
+  function onPlanFile(file) {
+    var reader = new FileReader();
+    reader.onload = function () {
+      try {
+        var text = String(reader.result || "").replace(/^\uFEFF/, "");
+        var parsed = JSON.parse(text);
+        var plan = parsePlanDocument(parsed);
+        if (!plan || plan.error) {
+          showBackupNote((plan && plan.error) || "El archivo del plan no es válido.");
+          return;
+        }
+        openGate(plan);
+      } catch (err) {
+        showBackupNote("El archivo del plan no es válido.");
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  function trapGate(event) {
+    var gate = document.getElementById("plan-gate");
+    if (!gate || gate.hidden) return;
+    if (event.key === "Escape") {
+      event.preventDefault();
+      closeGate();
+      return;
+    }
+    if (event.key !== "Tab") return;
+    var nodes = gate.querySelectorAll("button:not(:disabled)");
+    if (!nodes.length) return;
+    var first = nodes[0];
+    var last = nodes[nodes.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  }
+
+  function formatMedium(ymd) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(ymd || "")) return "";
+    var p = parseYmd(ymd);
+    var dt = new Date(Date.UTC(p.y, p.m - 1, p.d, 12));
+    return new Intl.DateTimeFormat("es-ES", {
+      timeZone: "UTC",
+      day: "numeric",
+      month: "long",
+      year: "numeric"
+    }).format(dt);
+  }
+
+  function planRangeLabel(plan, inUse) {
+    if (inUse) return plan.activeFrom ? ("En uso desde el " + formatMedium(plan.activeFrom)) : "En uso";
+    if (plan.activeFrom && plan.activeUntil && plan.activeFrom !== plan.activeUntil) {
+      return "Activo del " + formatMedium(plan.activeFrom) + " al " + formatMedium(plan.activeUntil);
+    }
+    var day = plan.activeFrom || plan.activeUntil;
+    return day ? ("Activo el " + formatMedium(day)) : "Plan archivado";
+  }
+
+  function maxKg(exercise) {
+    var max = null;
+    var sets = exercise && exercise.sets ? exercise.sets : [];
+    for (var i = 0; i < sets.length; i++) {
+      var kg = sets[i] && typeof sets[i].kg === "number" ? sets[i].kg : null;
+      if (kg == null || !isFinite(kg)) continue;
+      if (max == null || kg > max) max = kg;
+    }
+    return max;
+  }
+
+  function setsSummary(exercise) {
+    var parts = [];
+    var sets = (exercise && exercise.sets) || [];
+    for (var i = 0; i < sets.length; i++) {
+      var set = sets[i];
+      parts.push("S" + set.n + " " + (set.kg != null ? formatKg(set.kg) + " kg" : "—"));
+    }
+    return parts.join(" · ");
+  }
+
+  function sessionSummary(session) {
+    if (session.kind === "block") return session.sessionDone ? "Sesión hecha" : "Sesión registrada";
+    var count = (session.exercises || []).length;
+    var max = null;
+    (session.exercises || []).forEach(function (exercise) {
+      var kg = maxKg(exercise);
+      if (kg != null && (max == null || kg > max)) max = kg;
+    });
+    var text = count + (count === 1 ? " ejercicio" : " ejercicios");
+    if (max != null) text += " · máx. " + formatKg(max) + " kg";
+    return text;
+  }
+
+  function sortedSessions() {
+    return readHistory().sessions.slice().sort(function (a, b) {
+      if (a.date === b.date) return String(b.savedAt || "").localeCompare(String(a.savedAt || ""));
+      return a.date < b.date ? 1 : -1;
+    });
+  }
+
+  function sortedArchive() {
+    return readHistory().archive.slice().sort(function (a, b) {
+      var aa = a.activeUntil || a.activeFrom || "";
+      var bb = b.activeUntil || b.activeFrom || "";
+      if (aa === bb) return String(b.activeFrom || "").localeCompare(String(a.activeFrom || ""));
+      return aa < bb ? 1 : -1;
+    });
+  }
+
+  function exercisesInHistory() {
+    var map = {};
+    var list = [];
+    readHistory().sessions.forEach(function (session) {
+      (session.exercises || []).forEach(function (exercise) {
+        if (!exercise || !exercise.id || map[exercise.id]) return;
+        map[exercise.id] = true;
+        list.push({ id: exercise.id, name: exercise.name || exercise.id });
+      });
+    });
+    list.sort(function (a, b) { return a.name.localeCompare(b.name, "es"); });
+    return list;
+  }
+
+  function pointsForExercise(exerciseId) {
+    var points = [];
+    var sessions = readHistory().sessions.slice().sort(function (a, b) {
+      if (a.date === b.date) return String(a.savedAt || "").localeCompare(String(b.savedAt || ""));
+      return a.date < b.date ? -1 : 1;
+    });
+    sessions.forEach(function (session) {
+      var found = null;
+      (session.exercises || []).forEach(function (exercise) {
+        if (exercise.id === exerciseId) found = exercise;
+      });
+      if (!found) return;
+      var kg = maxKg(found);
+      if (kg == null) return;
+      points.push({ date: session.date, kg: kg, summary: setsSummary(found) });
+    });
+    return points;
+  }
+
+  function buildChart(points) {
+    var svgNS = "http://www.w3.org/2000/svg";
+    var w = 320;
+    var h = 168;
+    var padL = 42;
+    var padR = 12;
+    var padT = 16;
+    var padB = 28;
+    var svg = document.createElementNS(svgNS, "svg");
+    svg.setAttribute("viewBox", "0 0 " + w + " " + h);
+    svg.setAttribute("role", "img");
+    var label = "Evolución del peso máximo";
+    if (points.length) label += ". Último valor " + formatKg(points[points.length - 1].kg) + " kg";
+    svg.setAttribute("aria-label", label);
+    function svgEl(name, attrs) {
+      var node = document.createElementNS(svgNS, name);
+      Object.keys(attrs).forEach(function (key) { node.setAttribute(key, attrs[key]); });
+      return node;
+    }
+    var vals = points.map(function (point) { return point.kg; });
+    var min = Math.min.apply(null, vals);
+    var max = Math.max.apply(null, vals);
+    if (min === max) {
+      min = Math.max(0, min - 5);
+      max = max + 5;
+    } else {
+      var span = max - min;
+      min = Math.max(0, min - span * 0.2);
+      max = max + span * 0.2;
+    }
+    function xAt(index) {
+      if (points.length === 1) return (padL + w - padR) / 2;
+      return padL + (index * (w - padL - padR)) / (points.length - 1);
+    }
+    function yAt(kg) {
+      return padT + (1 - (kg - min) / (max - min)) * (h - padT - padB);
+    }
+    for (var g = 0; g < 3; g++) {
+      var kg = min + ((max - min) * g) / 2;
+      var yy = yAt(kg);
+      svg.appendChild(svgEl("line", {
+        x1: String(padL),
+        y1: String(yy),
+        x2: String(w - padR),
+        y2: String(yy),
+        stroke: "#3a3128",
+        "stroke-width": "1"
+      }));
+      var axis = svgEl("text", {
+        x: String(padL - 6),
+        y: String(yy + 4),
+        fill: "#cbbba8",
+        "font-size": "11",
+        "text-anchor": "end",
+        "font-family": "system-ui, sans-serif"
+      });
+      axis.textContent = formatKg(Math.round(kg));
+      svg.appendChild(axis);
+    }
+    if (points.length > 1) {
+      var coords = points.map(function (point, index) { return xAt(index) + "," + yAt(point.kg); });
+      svg.appendChild(svgEl("polyline", {
+        points: coords.join(" "),
+        fill: "none",
+        stroke: "#ff9f1a",
+        "stroke-width": "2.5",
+        "stroke-linejoin": "round",
+        "stroke-linecap": "round"
+      }));
+    }
+    points.forEach(function (point, index) {
+      svg.appendChild(svgEl("circle", {
+        cx: String(xAt(index)),
+        cy: String(yAt(point.kg)),
+        r: "4.5",
+        fill: "#ffb03a",
+        stroke: "#1a1008",
+        "stroke-width": "1.5"
+      }));
+    });
+    var indexes = points.length === 1 ? [0] : [0, points.length - 1];
+    indexes.forEach(function (index) {
+      var anchor = "middle";
+      if (points.length > 1 && index === 0) anchor = "start";
+      if (points.length > 1 && index === points.length - 1) anchor = "end";
+      var tick = svgEl("text", {
+        x: String(xAt(index)),
+        y: String(h - 6),
+        fill: "#e4d5c4",
+        "font-size": "11",
+        "text-anchor": anchor,
+        "font-family": "system-ui, sans-serif"
+      });
+      tick.textContent = points[index].date.slice(8) + "/" + points[index].date.slice(5, 7);
+      svg.appendChild(tick);
+    });
+    return svg;
+  }
+
+  function appendBack(root) {
+    root.appendChild(el("button", {
+      class: "reset back-btn",
+      type: "button",
+      "data-history-back": "1",
+      text: "Volver"
+    }));
+  }
+
+  function renderHistory() {
+    var root = document.getElementById("history");
+    if (!root) return;
+    root.replaceChildren();
+    if (historyMode === "session") renderSessionDetail(root);
+    else if (historyMode === "plan") renderPlanDetail(root);
+    else renderHistoryHome(root);
+  }
+
+  function renderHistoryHome(root) {
+    var sessions = sortedSessions();
+    root.appendChild(el("h2", { text: "Historial" }));
+    root.appendChild(el("p", {
+      class: "section-help",
+      text: sessions.length
+        ? (sessions.length + (sessions.length === 1 ? " entreno guardado" : " entrenos guardados"))
+        : "Todavía no hay entrenos guardados. Al terminar una sesión, pulsa Guardar entrenamiento."
+    }));
+    if (sessions.length) {
+      var list = el("div", { class: "hist-list" });
+      sessions.forEach(function (session) {
+        var btn = el("button", { class: "hist-item", type: "button" });
+        btn.setAttribute("data-open-session", session.id);
+        btn.appendChild(el("span", { class: "ex", text: formatLong(session.date) }));
+        btn.appendChild(el("span", { class: "rx", text: session.title || "Sesión" }));
+        var meta = (session.planName || "Plan") + (session.dayLabel ? " · " + session.dayLabel : "");
+        meta += " · " + sessionSummary(session);
+        btn.appendChild(el("span", { class: "hist-meta", text: meta }));
+        list.appendChild(btn);
+      });
+      root.appendChild(list);
+    }
+
+    root.appendChild(el("h3", { text: "Evolución de pesos" }));
+    root.appendChild(el("p", {
+      class: "section-help",
+      text: "Peso máximo de cada sesión, con el detalle de todas las series."
+    }));
+    var catalog = exercisesInHistory();
+    if (!catalog.length) {
+      root.appendChild(el("p", { class: "lede", text: "Cuando guardes un gimnasio con pesos, aquí verás cómo evolucionan." }));
+    } else {
+      if (!chartExerciseId || !catalog.some(function (item) { return item.id === chartExerciseId; })) {
+        var bestId = catalog[0].id;
+        var bestCount = -1;
+        catalog.forEach(function (item) {
+          var count = pointsForExercise(item.id).length;
+          if (count > bestCount) {
+            bestCount = count;
+            bestId = item.id;
+          }
+        });
+        chartExerciseId = bestId;
+      }
+      var label = el("label", { class: "field-label", text: "Ejercicio" });
+      var select = el("select", { class: "select", "data-chart-exercise": "1", "aria-label": "Ejercicio para la evolución" });
+      catalog.forEach(function (item) {
+        var option = el("option", { value: item.id, text: item.name });
+        select.appendChild(option);
+      });
+      select.value = chartExerciseId;
+      label.appendChild(select);
+      root.appendChild(label);
+      var points = pointsForExercise(chartExerciseId);
+      var card = el("div", { class: "chart-card" });
+      if (!points.length) {
+        card.appendChild(el("p", { class: "lede", text: "Todavía no hay pesos guardados para este ejercicio." }));
+      } else {
+        card.appendChild(buildChart(points));
+        card.appendChild(el("p", { class: "chart-caption", text: "Peso máximo de cada sesión, en kg." }));
+        var rows = el("ul", { class: "evo-list" });
+        points.slice().reverse().forEach(function (point) {
+          var li = el("li");
+          li.appendChild(el("span", { text: formatMedium(point.date) }));
+          li.appendChild(el("span", { class: "evo-kg", text: point.summary || (formatKg(point.kg) + " kg") }));
+          rows.appendChild(li);
+        });
+        card.appendChild(rows);
+      }
+      root.appendChild(card);
+    }
+
+    root.appendChild(el("h3", { text: "Planes" }));
+    var current = currentRecord();
+    var currentBtn = el("button", { class: "hist-item", type: "button" });
+    currentBtn.setAttribute("data-open-plan", "current");
+    currentBtn.appendChild(el("span", { class: "ex", text: current.name }));
+    currentBtn.appendChild(el("span", { class: "hist-meta", text: planRangeLabel(current, true) }));
+    var currentList = el("div", { class: "hist-list" });
+    currentList.appendChild(currentBtn);
+    root.appendChild(currentList);
+
+    root.appendChild(el("h3", { text: "Planes archivados" }));
+    var archive = sortedArchive();
+    if (!archive.length) {
+      root.appendChild(el("p", { class: "lede", text: "Todavía no hay planes archivados. Al cargar un plan nuevo, el anterior se guarda aquí." }));
+      return;
+    }
+    var archivedList = el("div", { class: "hist-list" });
+    archive.forEach(function (plan) {
+      var btn = el("button", { class: "hist-item", type: "button" });
+      btn.setAttribute("data-open-plan", planSignature(plan));
+      btn.appendChild(el("span", { class: "ex", text: plan.name }));
+      btn.appendChild(el("span", { class: "hist-meta", text: planRangeLabel(plan, false) }));
+      archivedList.appendChild(btn);
+    });
+    root.appendChild(archivedList);
+  }
+
+  function renderSessionDetail(root) {
+    appendBack(root);
+    var session = null;
+    var sessions = readHistory().sessions;
+    for (var i = 0; i < sessions.length; i++) {
+      if (sessions[i] && sessions[i].id === historyRef) session = sessions[i];
+    }
+    if (!session) {
+      root.appendChild(el("p", { class: "lede", text: "No se encontró ese entreno." }));
+      return;
+    }
+    root.appendChild(el("p", { class: "when", text: formatLong(session.date) }));
+    var tags = el("div", { class: "tags" });
+    if (session.kicker) tags.appendChild(el("p", { class: "kicker", text: session.kicker }));
+    if (session.chip) tags.appendChild(el("p", { class: "chip", text: session.chip }));
+    root.appendChild(tags);
+    root.appendChild(el("h2", { text: session.title || "Sesión" }));
+    var meta = (session.planName || "Plan") + (session.dayLabel ? " · " + session.dayLabel : "");
+    root.appendChild(el("p", { class: "lede", text: meta }));
+    if (session.kind === "block") {
+      var card = el("div", { class: "block" });
+      var steps = session.steps || [];
+      if (steps.length) {
+        var list = el("ul", { class: "notes" });
+        steps.forEach(function (step) { list.appendChild(el("li", { text: step })); });
+        card.appendChild(list);
+      }
+      card.appendChild(el("p", { class: "count", text: session.sessionDone ? "Sesión hecha" : "Pendiente" }));
+      root.appendChild(card);
+      return;
+    }
+    var wrap = el("div", { class: "lifts" });
+    (session.exercises || []).forEach(function (exercise) {
+      var group = el("div", { class: "group" });
+      (exercise.sets || []).forEach(function (set) {
+        var row = el("div", { class: "set prior-set" + (set.done ? " is-done" : "") });
+        row.appendChild(el("span", { class: "n", text: String(set.n) }));
+        var body = el("span", { class: "body" });
+        body.appendChild(el("span", { class: "ex", text: exercise.name }));
+        body.appendChild(el("span", { class: "rx", text: set.reps || exercise.rx || "Serie " + set.n }));
+        row.appendChild(body);
+        row.appendChild(el("span", {
+          class: "prior-kg",
+          text: set.kg != null ? formatKg(set.kg) + " kg" : "sin peso"
+        }));
+        group.appendChild(row);
+      });
+      wrap.appendChild(group);
+    });
+    root.appendChild(wrap);
+  }
+
+  function renderPlanDetail(root) {
+    appendBack(root);
+    var found = null;
+    var inUse = false;
+    if (historyRef === "current") {
+      found = currentRecord();
+      inUse = true;
+    } else {
+      var archive = readHistory().archive;
+      for (var i = 0; i < archive.length; i++) {
+        if (planSignature(archive[i]) === historyRef) found = archive[i];
+      }
+    }
+    if (!found) {
+      root.appendChild(el("p", { class: "lede", text: "No se encontró ese plan." }));
+      return;
+    }
+    root.appendChild(el("p", { class: "kicker", text: inUse ? "En uso" : "Archivado" }));
+    root.appendChild(el("h2", { text: found.name }));
+    root.appendChild(el("p", { class: "lede", text: planRangeLabel(found, inUse) }));
+    var order = [1, 2, 3, 4, 5, 6, 0];
+    order.forEach(function (weekday) {
+      var day = programDayAt(found.program, weekday);
+      if (!day) return;
+      var card = el("div", { class: "block" });
+      card.appendChild(el("p", { class: "seq-label", text: (NAME[weekday] || "") + (day.title ? " · " + day.title : "") }));
+      if (day.kind === "gym" && day.exercises && day.exercises.length) {
+        var list = el("ul", { class: "notes" });
+        day.exercises.forEach(function (exercise) {
+          var line = exercise.name + (exercise.rx ? " · " + exercise.rx : "");
+          list.appendChild(el("li", { text: line }));
+        });
+        card.appendChild(list);
+      } else if (day.kind === "block" && day.steps && day.steps.length) {
+        var steps = el(day.sequence ? "ol" : "ul", { class: day.sequence ? "seq" : "notes" });
+        day.steps.forEach(function (step) { steps.appendChild(el("li", { text: step })); });
+        card.appendChild(steps);
+      } else {
+        card.appendChild(el("p", { class: "lede", text: day.lede || "Descanso" }));
+      }
+      root.appendChild(card);
+    });
+  }
+
+  function onHistoryClick(event) {
+    var back = event.target.closest("[data-history-back]");
+    if (back) {
+      historyMode = "list";
+      historyRef = null;
+      renderHistory();
+      window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+      return;
+    }
+    var sess = event.target.closest("[data-open-session]");
+    if (sess) {
+      historyMode = "session";
+      historyRef = sess.getAttribute("data-open-session");
+      renderHistory();
+      window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+      return;
+    }
+    var planBtn = event.target.closest("[data-open-plan]");
+    if (!planBtn) return;
+    historyMode = "plan";
+    historyRef = planBtn.getAttribute("data-open-plan");
+    renderHistory();
+    window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+  }
+
+  function onHistoryChange(event) {
+    var sel = event.target.closest("[data-chart-exercise]");
+    if (!sel) return;
+    chartExerciseId = sel.value;
+    var y = window.scrollY;
+    renderHistory();
+    window.scrollTo(0, y);
+  }
+
+  function showView(name) {
+    var next = name === "history" ? "history" : "train";
+    var changed = next !== viewName;
+    viewName = next;
+    var train = next === "train";
+    var week = document.querySelector(".week");
+    var history = document.getElementById("history");
+    var trainBtn = document.getElementById("view-train");
+    var histBtn = document.getElementById("view-history");
+    if (week) week.hidden = !train;
+    panel.hidden = !train;
+    if (history) history.hidden = train;
+    if (trainBtn) trainBtn.setAttribute("aria-pressed", train ? "true" : "false");
+    if (histBtn) histBtn.setAttribute("aria-pressed", train ? "false" : "true");
+    if (changed) {
+      disarm();
+      disarmSave();
+    }
+    if (!train) {
+      historyMode = "list";
+      historyRef = null;
+      renderHistory();
+    }
+    if (changed) window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+  }
+
+  function wireHistoryUi() {
+    var trainBtn = document.getElementById("view-train");
+    var histBtn = document.getElementById("view-history");
+    var historyEl = document.getElementById("history");
+    var planFile = document.getElementById("plan-file");
+    var gate = document.getElementById("plan-gate");
+    if (trainBtn) trainBtn.addEventListener("click", function () { showView("train"); });
+    if (histBtn) histBtn.addEventListener("click", function () { showView("history"); });
+    if (historyEl) {
+      historyEl.addEventListener("click", onHistoryClick);
+      historyEl.addEventListener("change", onHistoryChange);
+    }
+    if (planFile) {
+      planFile.addEventListener("change", function () {
+        var file = planFile.files && planFile.files[0];
+        planFile.value = "";
+        if (file) onPlanFile(file);
+      });
+    }
+    var downloadBtn = document.getElementById("gate-download");
+    var applyBtn = document.getElementById("gate-apply");
+    var cancelBtn = document.getElementById("gate-cancel");
+    if (downloadBtn) downloadBtn.addEventListener("click", onGateDownload);
+    if (applyBtn) applyBtn.addEventListener("click", applyPendingPlan);
+    if (cancelBtn) cancelBtn.addEventListener("click", closeGate);
+    if (gate) gate.addEventListener("keydown", trapGate);
+  }
+
 
   var exportBtn = document.getElementById("export-backup");
   var importFile = document.getElementById("import-file");
@@ -1478,7 +2923,7 @@
   }
 
   function exportBackup() {
-    var blob = new Blob([JSON.stringify(readStore())], { type: "application/json" });
+    var blob = new Blob([JSON.stringify(backupPayload())], { type: "application/json" });
     var url = URL.createObjectURL(blob);
     var link = el("a", { href: url, download: "dorian-backup-" + madridToday() + ".json" });
     document.body.appendChild(link);
@@ -1491,11 +2936,11 @@
     return key === "__proto__" || key === "constructor" || key === "prototype";
   }
 
-  function mergeBackup(incoming) {
+  function mergeProgress(incoming) {
     if (!incoming || typeof incoming !== "object" || Array.isArray(incoming)) return false;
     var all = readStore();
     Object.keys(incoming).forEach(function (dayKey) {
-      if (isUnsafeKey(dayKey)) return;
+      if (isUnsafeKey(dayKey) || isBackupMetaKey(dayKey)) return;
       var src = incoming[dayKey];
       if (!src || typeof src !== "object" || Array.isArray(src)) return;
       if (!all[dayKey] || typeof all[dayKey] !== "object" || Array.isArray(all[dayKey])) all[dayKey] = {};
@@ -1506,6 +2951,18 @@
     });
     writeStore();
     return true;
+  }
+
+  function mergeBackup(incoming) {
+    if (!incoming || typeof incoming !== "object" || Array.isArray(incoming)) return false;
+    var ok = mergeProgress(incoming);
+    var rawHistory = incoming._dorianHistory;
+    if (typeof rawHistory === "string" && rawHistory) {
+      try { mergeHistoryImport(JSON.parse(rawHistory)); } catch (err) {}
+    } else if (rawHistory && typeof rawHistory === "object" && !Array.isArray(rawHistory)) {
+      mergeHistoryImport(rawHistory);
+    }
+    return ok;
   }
 
   if (exportBtn) exportBtn.addEventListener("click", exportBackup);
@@ -1521,7 +2978,10 @@
           var parsed = JSON.parse(text);
           if (!mergeBackup(parsed)) throw new Error("bad");
           disarm();
+          disarmSave();
+          updatePlanLine();
           renderPanel();
+          if (viewName === "history") renderHistory();
           showBackupNote("Copia importada");
         } catch (err) {
           showBackupNote("No se pudo importar");
@@ -1539,7 +2999,9 @@
 
   buildDays();
   paintDays();
+  updatePlanLine();
   renderPanel();
+  wireHistoryUi();
 })();
   </script>
 </body>
