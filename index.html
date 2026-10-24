@@ -1655,6 +1655,7 @@
       var row = track.closest(".set");
       if (row) row.classList.toggle("is-done", on);
       else track.classList.toggle("is-done", on);
+      if (on) commitReferenceKg(row);
       var label = track.querySelector(".btn-label");
       if (label) label.textContent = on ? "Sesión hecha" : "Marcar sesión hecha";
       disarm();
@@ -1669,6 +1670,24 @@
     var resetBtn = event.target.closest("[data-reset]");
     if (resetBtn && panel.contains(resetBtn)) onReset(resetBtn);
   });
+
+  // Marking a set done with an empty weight keeps the grey reference as the logged kg.
+  function commitReferenceKg(row) {
+    if (!row) return;
+    var input = row.querySelector("input[data-kg]");
+    if (!input || String(input.value || "").trim() !== "") return;
+    var id = input.getAttribute("data-id");
+    if (!id || isMetaKey(id)) return;
+    var bits = id.split("-");
+    var setNum = Number(bits.pop());
+    var exerciseId = bits.join("-");
+    if (!exerciseId || !(setNum >= 1)) return;
+    var ref = lastSavedKg(exerciseId, setNum, selected);
+    if (ref == null) return;
+    input.value = formatKg(ref);
+    input.removeAttribute("placeholder");
+    setKg(selected, id, ref, input.getAttribute("data-name"));
+  }
 
   function commitKgInput(input) {
     if (!input || !panel.contains(input) || !input.hasAttribute("data-kg")) return;
